@@ -16,12 +16,12 @@ import java.util.Map;
  * @author Siddhanth Venkateshwaran
  */
 public class Processor {
-    private long initialTimestamp = -1;
+    private static long initialTimestamp = -1;
     private static DeviceData db;
     private static final Logger logger = LoggerFactory.getLogger(Processor.class);
 
     public static void connectDatabase() throws Exception {
-        db = new DeviceData(String.format("jdbc:postgresql://%s/%s", dbHost, dbName), dbUser, dbPassword);
+        db = new DeviceData();
         db.createDeviceDataTable(deviceTable);
     }
 
@@ -33,7 +33,7 @@ public class Processor {
      * @param value Device data
      * @param timestamp Time at which device sent it's data
      */
-    public Map<String, Object> process(long deviceId, int value, long timestamp) {
+    public static Map<String, Object> process(long deviceId, int value, long timestamp) {
         Map<String, Object> record;
         Map<String, Object> deviceRecord = new HashMap<>();
 
@@ -72,7 +72,7 @@ public class Processor {
      * @param start Start timestamp of the first device which contacted the web server
      * @return Start time point of input timestamp based on 1-minute increments
      */
-    public long getTimestampStart(long timestamp, long start) {
+    public static long getTimestampStart(long timestamp, long start) {
         long timestampStart = 0;
         for (long i = timestamp; i >= timestamp-60; i--) {
             if ((i-start) % 60 == 0) {

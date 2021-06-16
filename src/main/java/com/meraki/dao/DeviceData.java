@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.meraki.Constants.*;
+
 /**
  * This class communicates with the postgresql database
  * to query and update device data.
@@ -21,17 +23,16 @@ public class DeviceData {
 
     private static final Logger logger = LoggerFactory.getLogger(DeviceData.class);
 
-    public DeviceData(String url, String user, String pwd) throws Exception {
-        this.conn = initializeConnection(url, user, pwd);
+    public DeviceData() throws Exception {
+        this.conn = initializeConnection();
     }
 
     /**
      * Connects to the database and returns a connection object
-     * @param url Database server URL
-     * @param user Current user of the database
-     * @param pwd Password of current user
      */
-    private Connection initializeConnection(String url, String user, String pwd) throws Exception {
+    private Connection initializeConnection() throws Exception {
+        String url = String.format("jdbc:postgresql://%s/%s", dbHost, dbName);
+        String user = dbUser, pwd = dbPassword;
         Properties props = new Properties();
         props.setProperty("user", user);
         props.setProperty("password", pwd);
