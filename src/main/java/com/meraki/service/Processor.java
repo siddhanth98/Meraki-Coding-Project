@@ -1,5 +1,8 @@
 package com.meraki.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is responsible computes and updates the minimum,
  * maximum and average values of the given device using the data obtained
@@ -7,6 +10,8 @@ package com.meraki.service;
  * @author Siddhanth Venkateshwaran
  */
 public class Processor {
+
+    private static final Logger logger = LoggerFactory.getLogger(Processor.class);
 
     /**
      * This function computes the valid timestamp-start for the given
