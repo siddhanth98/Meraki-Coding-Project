@@ -14,7 +14,7 @@ import java.util.Properties;
  * @author Siddhanth Venkateshwaran
  */
 public class DeviceData {
-    private Connection conn;
+    private final Connection conn;
     private PreparedStatement select;
     private PreparedStatement update;
     private PreparedStatement insert;
