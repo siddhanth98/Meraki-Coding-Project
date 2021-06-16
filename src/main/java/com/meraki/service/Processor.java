@@ -1,7 +1,13 @@
 package com.meraki.service;
 
+import static com.meraki.Constants.*;
+import com.meraki.dao.DeviceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is responsible computes and updates the minimum,
@@ -10,8 +16,14 @@ import org.slf4j.LoggerFactory;
  * @author Siddhanth Venkateshwaran
  */
 public class Processor {
-
+    private long initialTimestamp = -1;
+    private static DeviceData db;
     private static final Logger logger = LoggerFactory.getLogger(Processor.class);
+
+    public static void connectDatabase() throws Exception {
+        db = new DeviceData(String.format("jdbc:postgresql://%s/%s", dbHost, dbName), dbUser, dbPassword);
+        db.createDeviceDataTable(deviceTable);
+    }
 
     /**
      * This function computes the valid timestamp-start for the given
@@ -21,8 +33,36 @@ public class Processor {
      * @param value Device data
      * @param timestamp Time at which device sent it's data
      */
-    public void process(long deviceId, int value, long timestamp) {
+    public Map<String, Object> process(long deviceId, int value, long timestamp) {
+        Map<String, Object> record;
+        Map<String, Object> deviceRecord = new HashMap<>();
 
+        try {
+            long tsStart = getTimestampStart(timestamp, initialTimestamp == -1 ? timestamp : initialTimestamp);
+            logger.info(String.format("Processing device-id %d, timestamp = %d%n", deviceId, tsStart));
+            record = db.getDeviceRecord(deviceId, tsStart);
+            if (record.isEmpty())
+                db.insertNewDeviceRecord(deviceId, tsStart, value, value, value, 1, value);
+            else {
+                int min = Integer.min(value, (int)record.get("minimum"));
+                int max = Integer.max(value, (int)record.get("maximum"));
+                long total = (long)record.get("total")+value;
+                int count = (int)record.get("count")+1;
+                float average = ((float)total / (float)count);
+                db.updateDeviceRecord(deviceId, tsStart, min, max, total, count, average);
+                deviceRecord = Map.of("did", deviceId, "min", min, "max", max, "avg", average);
+            }
+            if (initialTimestamp == -1)
+                initialTimestamp = tsStart;
+        }
+        catch(SQLException ex) {
+            logger.error(String.format("Database error - %d", ex.getErrorCode()));
+            ex.printStackTrace();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return deviceRecord;
     }
 
     /**

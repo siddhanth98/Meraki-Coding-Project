@@ -18,4 +18,5 @@ public class Constants {
     public static String dbPassword = config.getString("conf.DB.PASSWORD");
     public static String dbName = config.getString("conf.DB.NAME");
 
+    public static String deviceTable = config.getString("conf.DB.TABLE.NAME");
 }
