@@ -6,9 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-
-import static com.meraki.Constants.*;
 
 /**
  * This class communicates with the postgresql database
@@ -31,12 +28,7 @@ public class DeviceData {
      * Connects to the database and returns a connection object
      */
     private Connection initializeConnection() throws Exception {
-        String url = String.format("jdbc:postgresql://%s/%s", dbHost, dbName);
-        String user = dbUser, pwd = dbPassword;
-        Properties props = new Properties();
-        props.setProperty("user", user);
-        props.setProperty("password", pwd);
-        return DriverManager.getConnection(url, props);
+        return new MerakiPGDataSource().getDataSource().getConnection();
     }
 
     /**
@@ -93,6 +85,7 @@ public class DeviceData {
      * @param tableName Name of device data table
      */
     public void createDeviceDataTable(String tableName) throws Exception {
+        dropDeviceTable(tableName);
         String createStatement =
                 String.format("CREATE TABLE IF NOT EXISTS %s (" +
                         "did BIGINT, " +
@@ -111,6 +104,17 @@ public class DeviceData {
         setUpdateStatement(tableName);
         setSelectStatement(tableName);
         setInsertStatement(tableName);
+    }
+
+    /**
+     * Drops the device data table if it exists before creating it
+     * @param tableName Name of device data table
+     */
+    public void dropDeviceTable(String tableName) throws SQLException {
+        String dropStatement = String.format("DROP TABLE IF EXISTS %s", tableName);
+        Statement st = conn.createStatement();
+        st.executeUpdate(dropStatement);
+        st.close();
     }
 
     /**
@@ -209,5 +213,12 @@ public class DeviceData {
     public String getUpdateStatement(String tableName) {
         return String.format("UPDATE %s SET minimum=?, maximum=?, total=?, deviceCount=?, " +
                 "average=? WHERE did=? AND ts=?", tableName);
+    }
+
+    /**
+     * Closes the database connection
+     */
+    public void close() throws SQLException {
+        conn.close();
     }
 }

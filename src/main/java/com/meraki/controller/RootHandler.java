@@ -9,7 +9,7 @@ import java.io.OutputStream;
  * Root route handler for the web server
  * @author Siddhanth Venkateshwaran
  */
-public class Root implements HttpHandler {
+public class RootHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange he) {

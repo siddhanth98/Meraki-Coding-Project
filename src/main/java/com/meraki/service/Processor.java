@@ -1,6 +1,7 @@
 package com.meraki.service;
 
 import static com.meraki.Constants.*;
+
 import com.meraki.dao.DeviceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class Processor {
      * @param start Start timestamp of the first device which contacted the web server
      * @return Start time point of input timestamp based on 1-minute increments
      */
-    public static long getTimestampStart(long timestamp, long start) {
+    private static long getTimestampStart(long timestamp, long start) {
         long timestampStart = 0;
         for (long i = timestamp; i >= timestamp-60; i--) {
             if ((i-start) % 60 == 0) {
@@ -81,5 +82,18 @@ public class Processor {
             }
         }
         return timestampStart;
+    }
+
+    public static void closeDatabaseConnection() {
+        try {
+            db.close();
+        }
+        catch(SQLException ex) {
+            logger.error(String.format("ERROR while closing db connection - %d%n", ex.getErrorCode()));
+            ex.printStackTrace();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
