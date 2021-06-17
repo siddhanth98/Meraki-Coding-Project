@@ -1,0 +1,73 @@
+package com.meraki.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class QueryParser {
+
+    /**
+     * Parses the given request query and returns a map of properties
+     * either from a JSON content or query parameters
+     * @param query Request query string
+     */
+    public static Map<String, Object> parse(String query)
+            throws UnsupportedEncodingException, JsonProcessingException {
+        if (query != null) {
+            if (query.contains("&") && query.contains("="))
+                return QueryParser.parseURL(query);
+            return QueryParser.parseJsonRequest(query);
+        }
+        return new HashMap<>();
+    }
+
+    /**
+     * Parses the query and extracts the values from the query parameters
+     * @param query Request query
+     * @return Map of properties of query parameters
+     */
+    public static Map<String, Object> parseURL(String query) throws UnsupportedEncodingException {
+        Map<String, Object> parameters = new HashMap<>();
+        String[] pairs = query.split("[&]");
+        for (String pair : pairs) {
+            String[] p = pair.split("[=]");
+            String key = null, value = null;
+            if (p.length > 0) {
+                key = URLDecoder.decode(p[0], System.getProperty("file.encoding"));
+            }
+            if (p.length > 1) {
+                value = URLDecoder.decode(p[1], System.getProperty("file.encoding"));
+            }
+            if (parameters.containsKey(key)) {
+                Object obj = parameters.get(key);
+                List<String> values = new ArrayList<>();
+                values.add((String)obj);
+                values.add(value);
+                parameters.put(key, values);
+            }
+            else parameters.put(key, value);
+        }
+        return parameters;
+    }
+
+    /**
+     * De-serializes a JSON string query and returns a map of those JSON properties
+     * @param query Request query
+     * @return Map of properties from JSON request
+     */
+    public static Map<String, Object> parseJsonRequest(String query) throws JsonProcessingException {
+        Map<String, Object> parameters = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        DeviceRequest request = mapper.readValue(query, DeviceRequest.class);
+        parameters.put("did", request.getDeviceId());
+        parameters.put("value", request.getValue());
+        parameters.put("ts", request.getTimestamp());
+        return parameters;
+    }
+}

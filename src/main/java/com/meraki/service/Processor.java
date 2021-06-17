@@ -67,6 +67,29 @@ public class Processor {
     }
 
     /**
+     * Gets the previously stored record for a given device
+     * at the specified timestamp
+     * @param deviceId ID of device
+     * @param timestamp Requested timestamp
+     * @return Map of device stats - min, max, avg, count and total during the requested timestamp interval
+     */
+    public static Map<String, Object> getDeviceStats(long deviceId, long timestamp) {
+        Map<String, Object> record = new HashMap<>();
+        long tsStart = getTimestampStart(timestamp, initialTimestamp == -1 ? timestamp : initialTimestamp);
+        try {
+            record = db.getDeviceRecord(deviceId,tsStart);
+        }
+        catch(SQLException ex) {
+            logger.error(String.format("ERROR obtaining stats for device %d at timestamp-start %d%n", deviceId, tsStart));
+            ex.printStackTrace();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return record;
+    }
+
+    /**
      * This function gets the start time point of the current minute interval
      * to which the given timestamp belongs
      * @param timestamp Input timestamp sent by a device
