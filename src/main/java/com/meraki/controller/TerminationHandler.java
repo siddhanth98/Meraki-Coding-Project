@@ -1,5 +1,6 @@
 package com.meraki.controller;
 
+import com.meraki.Application;
 import com.meraki.service.Processor;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -20,8 +21,6 @@ public class TerminationHandler implements HttpHandler {
         os.write(response.getBytes());
 
         os.close();
-        Processor.closeDatabaseConnection();
-        he.getHttpContext().getServer().stop(0);
-        logger.info("Stream processor stopped!");
+        Application.stop();
     }
 }

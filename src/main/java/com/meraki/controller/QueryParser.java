@@ -2,6 +2,8 @@ package com.meraki.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 public class QueryParser {
 
+    private final static Logger logger = LoggerFactory.getLogger(QueryParser.class);
+
     /**
      * Parses the given request query and returns a map of properties
      * either from a JSON content or query parameters
@@ -21,8 +25,8 @@ public class QueryParser {
             throws UnsupportedEncodingException, JsonProcessingException {
         if (query != null) {
             if (query.contains("&") && query.contains("="))
-                return QueryParser.parseURL(query);
-            return QueryParser.parseJsonRequest(query);
+                return parseURL(query);
+            return parseJsonRequest(query);
         }
         return new HashMap<>();
     }
@@ -65,9 +69,15 @@ public class QueryParser {
         Map<String, Object> parameters = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         DeviceRequest request = mapper.readValue(query, DeviceRequest.class);
-        parameters.put("did", request.getDeviceId());
-        parameters.put("value", request.getValue());
-        parameters.put("ts", request.getTimestamp());
+        if (request.hasDeviceId()) {
+            parameters.put("did", request.getDeviceId());
+        }
+        if (request.hasValue()) {
+            parameters.put("value", request.getValue());
+        }
+        if (request.hasTimestamp()) {
+            parameters.put("ts", request.getTimestamp());
+        }
         return parameters;
     }
 }

@@ -30,7 +30,9 @@ public class DeviceStatsHandler implements HttpHandler {
 
             OutputStream os = he.getResponseBody();
             Map<String, Object> params = QueryParser.parse(query);
-            Map<String, Object> stats = Processor.getDeviceStats((long)params.get("did"), (long)params.get("ts"));
+            Map<String, Object> stats = new HashMap<>();
+            if (params.containsKey("did") && params.containsKey("ts"))
+                stats = Processor.getDeviceStats((long)params.get("did"), (long)params.get("ts"));
 
             if (stats.isEmpty()) {
                 responseCode = 404;
@@ -46,8 +48,8 @@ public class DeviceStatsHandler implements HttpHandler {
             logger.error(String.format("ERROR while serializing device stats - %s%n", ex.getMessage()));
             ex.printStackTrace();
         }
-        catch(IOException io) {
-            io.printStackTrace();
+        catch(Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -60,14 +62,5 @@ public class DeviceStatsHandler implements HttpHandler {
                         (float)record.get("average")
                 )
         );
-    }
-
-    public Map<String, Object> parseJsonRequest(String query) throws JsonProcessingException {
-        Map<String, Object> parameters = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        DeviceRequest stats = mapper.readValue(query, DeviceRequest.class);
-        parameters.put("did", stats.getDeviceId());
-        parameters.put("ts", stats.getTimestamp());
-        return parameters;
     }
 }

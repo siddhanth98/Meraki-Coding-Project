@@ -14,3 +14,8 @@ libraryDependencies ++=
   Seq(logbackCore, logbackClassic, slf4j,
     typesafe, junit, junitInterface, jdbc,
     http, jackson, httpClient)
+
+lazy val thisProject = (project in file("."))
+  .settings(
+      crossPaths := false
+  )
