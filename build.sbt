@@ -8,5 +8,9 @@ lazy val junitInterface = "com.novocode" % "junit-interface" % "0.11" % Test
 lazy val jdbc = "org.postgresql" % "postgresql" % "42.2.21"
 lazy val http = "com.sun.net.httpserver" % "http" % "20070405"
 lazy val jackson = "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.1"
+lazy val httpClient = "org.apache.httpcomponents.client5" % "httpclient5" % "5.1"
 
-libraryDependencies ++= Seq(logbackCore, logbackClassic, slf4j, typesafe, junit, junitInterface, jdbc, http, jackson)
+libraryDependencies ++=
+  Seq(logbackCore, logbackClassic, slf4j,
+    typesafe, junit, junitInterface, jdbc,
+    http, jackson, httpClient)
