@@ -16,6 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handler for the route where device stats is queried by a client
+ * @author Siddhanth Venkateshwaran
+ */
 public class DeviceStatsHandler implements HttpHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(DeviceStatsHandler.class);

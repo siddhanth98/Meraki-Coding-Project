@@ -31,10 +31,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Implements tests for stream processing service
+ * @author Siddhanth Venkateshwaran
+ */
 public class DeviceAPITest {
     private final static Config config = ConfigFactory.parseFile(new File("src/main/resources/application.conf"));
     private final static Logger logger = LoggerFactory.getLogger(DeviceAPITest.class);
 
+    /**
+     * Reads device data from configuration file for testing
+     * @param property Required configuration object path
+     */
     public List<DeviceRequest> getDeviceStream(String property) {
         List<? extends ConfigObject> requestsList = config.getObjectList(property);
         List<DeviceRequest> deviceStream = new ArrayList<>();
@@ -69,6 +77,9 @@ public class DeviceAPITest {
         Application.stop();
     }
 
+    /**
+     * Tests whether service responds correctly during startup
+     */
     @Test
     public void serviceShouldStart() throws IOException {
         HttpUriRequest request = new HttpGet("http://localhost:8000/");
@@ -76,6 +87,10 @@ public class DeviceAPITest {
         assertEquals(200, httpResponse.getCode());
     }
 
+    /**
+     * Tests whether all device update requests sent are processed
+     * without any errors by the service
+     */
     @Test
     public void serviceShouldObtainAllDeviceUpdates() throws IOException {
         List<DeviceRequest> deviceStream = getDeviceStream("conf.TEST.VALID_REQUESTS1");
@@ -86,6 +101,10 @@ public class DeviceAPITest {
         assertEquals(1, responseCodes.size());
     }
 
+    /**
+     * Tests whether service sends the proper response for
+     * an invalid device update request (malformed request parameters/missing values)
+     */
     @Test
     public void serviceShouldNotProcessInvalidRequests() throws IOException {
         List<DeviceRequest> deviceStream = getDeviceStream("conf.TEST.INVALID_REQUESTS");
@@ -96,6 +115,10 @@ public class DeviceAPITest {
         assertNotEquals(1, responseCodes.size());
     }
 
+    /**
+     * Tests whether service returns the most updated stats for
+     * a given device at the desired timestamp
+     */
     @Test
     public void serviceShouldReturnUpdatedDeviceStats() throws IOException, Exception {
         List<DeviceRequest> deviceStream = getDeviceStream("conf.TEST.VALID_REQUESTS2");

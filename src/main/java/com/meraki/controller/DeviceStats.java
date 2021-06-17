@@ -3,6 +3,10 @@ package com.meraki.controller;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Class to hold the device stats sent back by the server during testing
+ * @author Siddhanth Venkateshwaran
+ */
 public class DeviceStats {
     private final int min, max;
     private final float avg;

@@ -14,6 +14,10 @@ import java.net.InetSocketAddress;
 
 import static com.meraki.service.Processor.connectDatabase;
 
+/**
+ * Main class which starts and stops the server instance and specifies the route handlers
+ * @author Siddhanth Venkateshwaran
+ */
 public class Application {
     private final static Logger logger = LoggerFactory.getLogger(Application.class);
     private static HttpServer server;

@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class to implement parse URLs / deserialize JSON data from a request
+ * @author Siddhanth Venkateshwaran
+ */
 public class QueryParser {
 
     private final static Logger logger = LoggerFactory.getLogger(QueryParser.class);

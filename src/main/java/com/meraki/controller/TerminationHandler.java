@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Handler for the route used to close DB connection and
+ * stop the server instance
+ * @author Siddhanth Venkateshwaran
+ */
 public class TerminationHandler implements HttpHandler {
     private final static Logger logger = LoggerFactory.getLogger(TerminationHandler.class);
 
