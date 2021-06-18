@@ -35,8 +35,7 @@ public class DeviceUpdateHandler implements HttpHandler {
             String query = br.readLine(), response;
             int responseCode;
             OutputStream os = he.getResponseBody();
-
-            logger.info(String.format("Received query - %s%n", query));
+            logger.info(String.format("Received update request - %s%n", query));
 
             Map<String, Object> parameters = QueryParser.parse(query);
 

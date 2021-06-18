@@ -29,14 +29,17 @@ public class DeviceStatsHandler implements HttpHandler {
         try {
             InputStreamReader isr = new InputStreamReader(he.getRequestBody(), StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
-            String query = br.readLine(), response ;
+            String query = br.readLine(), response;
             int responseCode = 200;
 
             OutputStream os = he.getResponseBody();
             Map<String, Object> params = QueryParser.parse(query);
+            logger.info(String.format("Received query - %s", query));
+
             Map<String, Object> stats = new HashMap<>();
             if (params.containsKey("did") && params.containsKey("ts"))
-                stats = Processor.getDeviceStats((long)params.get("did"), (long)params.get("ts"));
+                stats = Processor.getDeviceStats(Long.parseLong(String.valueOf(params.get("did"))),
+                        Long.parseLong(String.valueOf(params.get("ts"))));
 
             if (stats.isEmpty()) {
                 responseCode = 404;

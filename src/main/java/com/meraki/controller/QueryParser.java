@@ -73,6 +73,7 @@ public class QueryParser {
         Map<String, Object> parameters = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         DeviceRequest request = mapper.readValue(query, DeviceRequest.class);
+
         if (request.hasDeviceId()) {
             parameters.put("did", request.getDeviceId());
         }
@@ -82,6 +83,7 @@ public class QueryParser {
         if (request.hasTimestamp()) {
             parameters.put("ts", request.getTimestamp());
         }
+        logger.info(String.format("Deserialized query - %s", parameters.toString()));
         return parameters;
     }
 }

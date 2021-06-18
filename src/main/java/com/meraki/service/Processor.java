@@ -33,6 +33,7 @@ public class Processor {
      * @param deviceId ID of device sending the data
      * @param value Device data
      * @param timestamp Time at which device sent it's data
+     * @return Map containing (updated) device stats (min, max and average) for the input timestamp
      */
     public static Map<String, Object> process(long deviceId, int value, long timestamp) {
         Map<String, Object> record;

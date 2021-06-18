@@ -21,23 +21,33 @@ public class DeviceRequestDeserializer extends StdDeserializer<DeviceRequest> {
     @Override
     public DeviceRequest deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        Long deviceId, timestamp;
-        Integer value;
+        JsonNode targetNode;
+        Long deviceId = null;
+        Long timestamp = null;
+        Integer value = null;
 
-        if (node.get("deviceId").isNull())
-            deviceId = null;
-        else
-            deviceId = node.get("deviceId").longValue();
+        targetNode = getValid(node, "did", "deviceId");
+        if (targetNode != null)
+            deviceId = targetNode.longValue();
 
-        if (node.get("value").isNull())
-            value = null;
-        else
-            value = (node.get("value")).intValue();
+        targetNode = getValid(node, "ts", "timestamp");
+        if (targetNode != null)
+            timestamp = targetNode.longValue();
 
-        if (node.get("timestamp").isNull())
-            timestamp = null;
-        else
-            timestamp = (node.get("timestamp")).longValue();
+        targetNode = getValid(node, "val", "value");
+        if (targetNode != null)
+            value = targetNode.intValue();
+
+        System.out.printf("did=%d, value=%d, ts=%d%n", deviceId, value, timestamp);
         return new DeviceRequest(deviceId, timestamp, value);
+    }
+
+    public JsonNode getValid(JsonNode node, String props1, String props2) {
+        JsonNode result = null;
+        if (node.has(props1) && !node.get(props1).isNull())
+            result = node.get(props1);
+        else if (node.has(props2) && !node.get(props2).isNull())
+            result = node.get(props2);
+        return result;
     }
 }
