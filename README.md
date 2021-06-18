@@ -1,9 +1,11 @@
 ## Running the project
 The documentation for the project can be found [here](documentation.md)
 
-- The project utilizes Java 11, PostGreSQL 12.2 and the SBT build tool to manage the project's dependencies.
+- The project utilizes Java 11, PostGreSQL 12.2 and the SBT build tool to manage the project's dependencies, in a Windows 10 platform.
 
 - So a version (>= 12.2) of the PostGreSQL server and other utilities, along with the SBT toolkit need to be installed in the target system.
+
+- PostGreSQL server and tools can be downloaded from [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) and SBT can be downloaded from [here](https://www.scala-sbt.org/download.html)
 
 - After installation, configure a database by using a command line tool like psql, using the following command: `CREATE DATABASE databaseName;`
 
