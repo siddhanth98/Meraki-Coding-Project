@@ -3,12 +3,14 @@ The documentation for the project can be found [here](documentation.md)
 
 - The project utilizes Java 11, PostGreSQL 12.2 and the SBT build tool to manage the project's dependencies.
 
-- So a version of the PostGreSQL server and other utilities, along with the SBT toolkit need to be installed in the target system.
+- So a version (>= 12.2) of the PostGreSQL server and other utilities, along with the SBT toolkit need to be installed in the target system.
 
-- After installing, configure a database and edit the following in the `src/main/resources/application.conf` file:
+- After installation, configure a database by using a command line tool like psql, using the following command: `CREATE DATABASE databaseName;`
 
-    - `conf.DB.USER`: Set this to a custom user name if required. Default user is postgres.
-    - `conf.DB.PWD`: Set this to the configured password of the current user (This property will removed in the future)
+- Edit the following in the `src/main/resources/application.conf` file:
+
+    - `conf.DB.USER`: Set this to a custom user name if required. Default user is "postgres".
+    - `conf.DB.PWD`: Set this to the configured password of the current user (This property will be removed in the future to make the service more secure)
     - `conf.DB.HOST`: Set this to the name of the host in which the database server will run. Default name is localhost.
     - `conf.DB.NAME`: Set this to the name of the  database which was configured earlier.
     - `conf.DB.TABLE.NAME`: Set this to the desired name of the device data table.
@@ -20,16 +22,16 @@ The documentation for the project can be found [here](documentation.md)
 - Run the project using the following steps:
 
     - Ensure the database server is running and the configuration variables are properly set up as specified above.
-    - From the root directory of the project, run the main application program using `sbt run` or `sbt "runMain com.meraki.Application`. This will start the server and automatically create the required table with the specified columns in the database.
+    - From the root directory of the project, run the main application program using `sbt run` or `sbt "runMain com.meraki.Application"`. This will start the server and automatically (drop if it exists) create the required table with the specified columns in the database.
     - The service can now be manually tested using a simple curl request as follows:
 
         - `curl http://localhost:8000`
-        - `curl -d "did=1&value=100&ts=1234556" http://localhost:8000/devices` Using URL encoded content type in the request body
-        - `curl -H "Content-Type:application/json" -d "{\"did\"=1,\"value\"=100,\"ts\"=1234556}"`
-        - `curl -d "did=1&ts=1234657" http://localhost:8000/deviceStats` - This will obtain the device stats for the requested device ID 1
-        - `curl -d "did=1&value=100&ts=1234556" http://localhost:8000/deviceStats` - This is the same as the previous request except for the change in the content-type from `application/json` to `application/x-www-form-urlencoded`
+        - `curl -d "did=1&value=100&ts=1234556" http://localhost:8000/devices` Send a device update request using URL encoded content type in the request body.
+        - `curl -H "Content-Type:application/json" -d "{\"did\"=1,\"value\"=100,\"ts\"=1234556}" http://localhost:8000/devices` Send a device update request using JSON encoded content in the request body.
+        - `curl -d "did=1&ts=1234657" http://localhost:8000/deviceStats` - This will obtain the device stats for the requested device ID 1.
+        - `curl -H "Content-Type:application/json" -d "{\"did\"=1,\"ts\"=1234556}" http://localhost:8000/deviceStats` - This is the same as the previous request except for the change in the content-type from `application/x-www-form-urlencoded` to `application/json`.
 
-    - The corresponding database table can be checked to ensure record are being stored.
+    - Appropriate responses will be received and the corresponding database table can be checked to ensure records are being stored.
 
 
 ### Running the tests
@@ -39,7 +41,7 @@ The documentation for the project can be found [here](documentation.md)
     - **Test3**: Ensures invalid requests are handled properly.
     - **Test4**: Ensures a subsequent query for device stats returns the most updated and most recent device values for the specified timestamp.
 
-- Run the following tests by running either of the following commands from the root directory of the project:
+- Run the tests by running either of the following commands from the root directory of the project:
 
     - `sbt test`
     - `sbt "testOnly com.meraki.DeviceAPITest`
