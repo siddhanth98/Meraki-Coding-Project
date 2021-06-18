@@ -38,7 +38,6 @@ public class DeviceRequestDeserializer extends StdDeserializer<DeviceRequest> {
         if (targetNode != null)
             value = targetNode.intValue();
 
-        System.out.printf("did=%d, value=%d, ts=%d%n", deviceId, value, timestamp);
         return new DeviceRequest(deviceId, timestamp, value);
     }
 
